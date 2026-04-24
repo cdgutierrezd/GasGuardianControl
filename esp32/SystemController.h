@@ -7,7 +7,11 @@ class SystemController {
   private:
     int relayPin;
     int buttonPin;
+
     bool valveClosed;
+
+    // 🔥 para detectar cambio de estado del gas
+    bool gasWasDanger;
 
   public:
     SystemController(int relay, int button);

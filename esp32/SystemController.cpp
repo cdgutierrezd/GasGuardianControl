@@ -4,44 +4,68 @@
 SystemController::SystemController(int relay, int button) {
   relayPin = relay;
   buttonPin = button;
+
   valveClosed = false;
+  gasWasDanger = false;
 }
 
 void SystemController::begin() {
   pinMode(relayPin, OUTPUT);
   pinMode(buttonPin, INPUT_PULLUP);
-  digitalWrite(relayPin, HIGH);
+
+  digitalWrite(relayPin, HIGH); // válvula abierta
 }
 
+// 🔥 LÓGICA PRINCIPAL
 void SystemController::update(GasManager &gas, int threshold) {
+
+  bool gasDanger = gas.isDanger(threshold);
   int buttonState = digitalRead(buttonPin);
 
-  if (buttonState == LOW) {
+  // ----------------------
+  // 🔴 GAS (evento: solo cuando cambia)
+  // ----------------------
+  if (gasDanger && !gasWasDanger) {
     digitalWrite(relayPin, LOW);
     valveClosed = true;
-    Serial.println("[BOTÓN MANUAL] Válvula CERRADA por botón físico");
-    return;
+
+    Serial.print("[AUTO] Gas peligroso → Válvula CERRADA: ");
+    Serial.println(gas.getValue());
   }
 
-  if (gas.isDanger(threshold)) {
-    digitalWrite(relayPin, LOW);
+  gasWasDanger = gasDanger;
 
-    if (!valveClosed) {
-      valveClosed = true;
-      Serial.print("[AUTOMÁTICO] Válvula CERRADA - Gas peligroso detectado: ");
-      Serial.println(gas.getValue());
-    }
+  // ----------------------
+  // 🔘 BOTÓN (siempre funciona)
+  // ----------------------
+  if (buttonState == LOW) {
+    valveClosed = !valveClosed;  // 🔥 toggle
 
-  } else {
-    digitalWrite(relayPin, HIGH);
-    valveClosed = false;
+    digitalWrite(relayPin, valveClosed ? LOW : HIGH);
+
+    Serial.println(valveClosed ? "[BOTÓN] CERRADA" : "[BOTÓN] ABIERTA");
+
+    delay(300); // anti rebote simple
   }
+
+  // ❌ NO más lógica automática
 }
 
+// ----------------------
+// 📊 ESTADO
+// ----------------------
 bool SystemController::isValveClosed() {
   return valveClosed;
 }
 
+// ----------------------
+// 📱 APP
+// ----------------------
 void SystemController::setValve(bool closed) {
+
   valveClosed = closed;
+
+  digitalWrite(relayPin, closed ? LOW : HIGH);
+
+  Serial.println(closed ? "[APP] CERRADA" : "[APP] ABIERTA");
 }
