@@ -8,6 +8,7 @@ class SystemController {
     int valveRelayPin;      // 🔥 válvula
     int extractorRelayPin;  // 🔥 extractor
     int buttonPin;          // 🔘 botón
+    int alarmRelayPin;      // Alarma
 
     bool valveClosed;
 
@@ -16,7 +17,7 @@ class SystemController {
 
   public:
     // 🔥 ahora recibe los 3 pines
-    SystemController(int valveRelay, int button, int extractorRelay);
+    SystemController(int valveRelay, int button, int extractorRelay, int alarmRelay);
 
     void begin();
     void update(GasManager &gas, int threshold);

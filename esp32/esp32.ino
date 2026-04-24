@@ -10,7 +10,7 @@ const char* ssid = "DANIEL G";
 const char* password = "zxc17030";
 
 GasManager gas;
-SystemController controller(5, 4, 2);
+SystemController controller(5, 4, 2, 13);
 ApiServer api;
 DisplayDriver driver;   // 🔥 NUEVO
 DisplayManager display;

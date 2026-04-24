@@ -4,10 +4,11 @@
 // ----------------------
 // CONSTRUCTOR
 // ----------------------
-SystemController::SystemController(int valveRelay, int button, int extractorRelay) {
+SystemController::SystemController(int valveRelay, int button, int extractorRelay, int alarmRelay) {
   valveRelayPin = valveRelay;
   buttonPin = button;
   extractorRelayPin = extractorRelay;
+  alarmRelayPin = alarmRelay;
 
   valveClosed = false;
   gasWasDanger = false;
@@ -20,9 +21,11 @@ void SystemController::begin() {
   pinMode(valveRelayPin, OUTPUT);
   pinMode(buttonPin, INPUT_PULLUP);
   pinMode(extractorRelayPin, OUTPUT);
+  pinMode(alarmRelayPin, OUTPUT);
 
   digitalWrite(valveRelayPin, HIGH);      // 🔴 válvula CERRADA
   digitalWrite(extractorRelayPin, LOW);   // extractor apagado
+  digitalWrite(alarmRelayPin, HIGH);
 }
 
 // ----------------------
@@ -37,6 +40,7 @@ void SystemController::update(GasManager &gas, int threshold) {
   // 🌀 EXTRACTOR (automático)
   // ----------------------
   digitalWrite(extractorRelayPin, gasDanger ? LOW : HIGH);
+  digitalWrite(alarmRelayPin, gasDanger ? LOW : HIGH);
 
   // ----------------------
   // 🔴 GAS (evento: solo cuando entra en peligro)
