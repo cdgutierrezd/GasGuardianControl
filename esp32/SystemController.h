@@ -5,16 +5,18 @@
 
 class SystemController {
   private:
-    int relayPin;
-    int buttonPin;
+    int valveRelayPin;      // 🔥 válvula
+    int extractorRelayPin;  // 🔥 extractor
+    int buttonPin;          // 🔘 botón
 
     bool valveClosed;
 
-    // 🔥 para detectar cambio de estado del gas
+    // 🔥 detectar cambio de estado del gas
     bool gasWasDanger;
 
   public:
-    SystemController(int relay, int button);
+    // 🔥 ahora recibe los 3 pines
+    SystemController(int valveRelay, int button, int extractorRelay);
 
     void begin();
     void update(GasManager &gas, int threshold);
