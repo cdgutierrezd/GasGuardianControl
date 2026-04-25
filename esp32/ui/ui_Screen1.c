@@ -7,7 +7,6 @@
 
 lv_obj_t * ui_Screen1 = NULL;
 lv_obj_t * ui_Image1 = NULL;
-lv_obj_t * ui_Image2 = NULL;
 lv_obj_t * ui_Panel1 = NULL;
 lv_obj_t * ui_uiLabelGasValue = NULL;
 lv_obj_t * ui_Label2 = NULL;
@@ -25,6 +24,11 @@ lv_obj_t * ui_uiBtnExtractor = NULL;
 lv_obj_t * ui_Panel3 = NULL;
 lv_obj_t * ui_Label6 = NULL;
 lv_obj_t * ui_Image5 = NULL;
+lv_obj_t * ui_Container7 = NULL;
+lv_obj_t * ui_Container5 = NULL;
+lv_obj_t * ui_uiLabelWifi = NULL;
+lv_obj_t * ui_Container6 = NULL;
+lv_obj_t * ui_uiLabelIp = NULL;
 // event funtions
 
 // build funtions
@@ -43,14 +47,6 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_align(ui_Image1, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_Image1, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_Image1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-
-    ui_Image2 = lv_img_create(ui_Screen1);
-    lv_img_set_src(ui_Image2, &ui_img_base2_png);
-    lv_obj_set_width(ui_Image2, LV_SIZE_CONTENT);   /// 240
-    lv_obj_set_height(ui_Image2, LV_SIZE_CONTENT);    /// 320
-    lv_obj_set_align(ui_Image2, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_Image2, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_clear_flag(ui_Image2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_Panel1 = lv_obj_create(ui_Screen1);
     lv_obj_set_width(ui_Panel1, 150);
@@ -94,7 +90,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_style_arc_opa(ui_uiArcGas, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_arc_width(ui_uiArcGas, 8, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    lv_obj_set_style_arc_color(ui_uiArcGas, lv_color_hex(0xFDE330), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_arc_color(ui_uiArcGas, lv_color_hex(0x41A853), LV_PART_INDICATOR | LV_STATE_DEFAULT);
     lv_obj_set_style_arc_opa(ui_uiArcGas, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
     lv_obj_set_style_arc_width(ui_uiArcGas, 8, LV_PART_INDICATOR | LV_STATE_DEFAULT);
 
@@ -106,7 +102,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_height(ui_Container1, 120);
     lv_obj_set_width(ui_Container1, lv_pct(100));
     lv_obj_set_x(ui_Container1, lv_pct(0));
-    lv_obj_set_y(ui_Container1, lv_pct(24));
+    lv_obj_set_y(ui_Container1, lv_pct(18));
     lv_obj_set_align(ui_Container1, LV_ALIGN_CENTER);
     lv_obj_clear_flag(ui_Container1, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
@@ -136,7 +132,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_remove_style_all(ui_Container2);
     lv_obj_set_width(ui_Container2, 70);
     lv_obj_set_height(ui_Container2, 70);
-    lv_obj_set_y(ui_Container2, 20);
+    lv_obj_set_y(ui_Container2, 15);
     lv_obj_set_x(ui_Container2, lv_pct(15));
     lv_obj_set_align(ui_Container2, LV_ALIGN_LEFT_MID);
     lv_obj_clear_flag(ui_Container2, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
@@ -152,7 +148,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_style_bg_opa(ui_uiBtnValve, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_shadow_color(ui_uiBtnValve, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_shadow_opa(ui_uiBtnValve, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_color(ui_uiBtnValve, lv_color_hex(0xFFE231), LV_PART_MAIN | LV_STATE_CHECKED);
+    lv_obj_set_style_bg_color(ui_uiBtnValve, lv_color_hex(0x41AA52), LV_PART_MAIN | LV_STATE_CHECKED);
     lv_obj_set_style_bg_opa(ui_uiBtnValve, 255, LV_PART_MAIN | LV_STATE_CHECKED);
 
     ui_Panel2 = lv_obj_create(ui_Container2);
@@ -190,7 +186,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_remove_style_all(ui_Container3);
     lv_obj_set_width(ui_Container3, 70);
     lv_obj_set_height(ui_Container3, 70);
-    lv_obj_set_y(ui_Container3, 20);
+    lv_obj_set_y(ui_Container3, 15);
     lv_obj_set_x(ui_Container3, lv_pct(-15));
     lv_obj_set_align(ui_Container3, LV_ALIGN_RIGHT_MID);
     lv_obj_clear_flag(ui_Container3, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
@@ -199,6 +195,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_width(ui_uiBtnExtractor, 70);
     lv_obj_set_height(ui_uiBtnExtractor, 70);
     lv_obj_set_align(ui_uiBtnExtractor, LV_ALIGN_CENTER);
+    lv_obj_add_state(ui_uiBtnExtractor, LV_STATE_CHECKED);       /// States
     lv_obj_add_flag(ui_uiBtnExtractor, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
     lv_obj_clear_flag(ui_uiBtnExtractor, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_radius(ui_uiBtnExtractor, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -206,7 +203,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_style_bg_opa(ui_uiBtnExtractor, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_shadow_color(ui_uiBtnExtractor, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_shadow_opa(ui_uiBtnExtractor, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_color(ui_uiBtnExtractor, lv_color_hex(0xFFE231), LV_PART_MAIN | LV_STATE_CHECKED);
+    lv_obj_set_style_bg_color(ui_uiBtnExtractor, lv_color_hex(0x41AA52), LV_PART_MAIN | LV_STATE_CHECKED);
     lv_obj_set_style_bg_opa(ui_uiBtnExtractor, 255, LV_PART_MAIN | LV_STATE_CHECKED);
 
     ui_Panel3 = lv_obj_create(ui_Container3);
@@ -240,6 +237,51 @@ void ui_Screen1_screen_init(void)
     lv_obj_clear_flag(ui_Image5, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_img_set_zoom(ui_Image5, 70);
 
+    ui_Container7 = lv_obj_create(ui_Screen1);
+    lv_obj_remove_style_all(ui_Container7);
+    lv_obj_set_height(ui_Container7, 40);
+    lv_obj_set_width(ui_Container7, lv_pct(100));
+    lv_obj_set_x(ui_Container7, 0);
+    lv_obj_set_y(ui_Container7, 140);
+    lv_obj_set_align(ui_Container7, LV_ALIGN_CENTER);
+    lv_obj_clear_flag(ui_Container7, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_Container5 = lv_obj_create(ui_Container7);
+    lv_obj_remove_style_all(ui_Container5);
+    lv_obj_set_width(ui_Container5, lv_pct(100));
+    lv_obj_set_height(ui_Container5, LV_SIZE_CONTENT);    /// 100
+    lv_obj_set_align(ui_Container5, LV_ALIGN_TOP_MID);
+    lv_obj_clear_flag(ui_Container5, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_uiLabelWifi = lv_label_create(ui_Container5);
+    lv_obj_set_width(ui_uiLabelWifi, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_uiLabelWifi, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_uiLabelWifi, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_uiLabelWifi, "WIFI: WIFI_RED");
+    lv_obj_set_style_text_color(ui_uiLabelWifi, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_uiLabelWifi, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_uiLabelWifi, &lv_font_montserrat_10, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_color(ui_uiLabelWifi, lv_color_hex(0x8F2E2E), LV_PART_MAIN | LV_STATE_DISABLED);
+    lv_obj_set_style_text_opa(ui_uiLabelWifi, 255, LV_PART_MAIN | LV_STATE_DISABLED);
+
+    ui_Container6 = lv_obj_create(ui_Container7);
+    lv_obj_remove_style_all(ui_Container6);
+    lv_obj_set_width(ui_Container6, lv_pct(100));
+    lv_obj_set_height(ui_Container6, lv_pct(100));
+    lv_obj_set_y(ui_Container6, 5);
+    lv_obj_set_x(ui_Container6, lv_pct(0));
+    lv_obj_set_align(ui_Container6, LV_ALIGN_CENTER);
+    lv_obj_clear_flag(ui_Container6, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_uiLabelIp = lv_label_create(ui_Container6);
+    lv_obj_set_width(ui_uiLabelIp, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_uiLabelIp, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_uiLabelIp, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_uiLabelIp, "IP: 1.000.000.00.0");
+    lv_obj_set_style_text_color(ui_uiLabelIp, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_uiLabelIp, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_uiLabelIp, &lv_font_montserrat_10, LV_PART_MAIN | LV_STATE_DEFAULT);
+
 }
 
 void ui_Screen1_screen_destroy(void)
@@ -249,7 +291,6 @@ void ui_Screen1_screen_destroy(void)
     // NULL screen variables
     ui_Screen1 = NULL;
     ui_Image1 = NULL;
-    ui_Image2 = NULL;
     ui_Panel1 = NULL;
     ui_uiLabelGasValue = NULL;
     ui_Label2 = NULL;
@@ -267,5 +308,10 @@ void ui_Screen1_screen_destroy(void)
     ui_Panel3 = NULL;
     ui_Label6 = NULL;
     ui_Image5 = NULL;
+    ui_Container7 = NULL;
+    ui_Container5 = NULL;
+    ui_uiLabelWifi = NULL;
+    ui_Container6 = NULL;
+    ui_uiLabelIp = NULL;
 
 }

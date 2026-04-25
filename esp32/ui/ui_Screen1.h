@@ -15,7 +15,6 @@ extern void ui_Screen1_screen_init(void);
 extern void ui_Screen1_screen_destroy(void);
 extern lv_obj_t * ui_Screen1;
 extern lv_obj_t * ui_Image1;
-extern lv_obj_t * ui_Image2;
 extern lv_obj_t * ui_Panel1;
 extern lv_obj_t * ui_uiLabelGasValue;
 extern lv_obj_t * ui_Label2;
@@ -33,6 +32,11 @@ extern lv_obj_t * ui_uiBtnExtractor;
 extern lv_obj_t * ui_Panel3;
 extern lv_obj_t * ui_Label6;
 extern lv_obj_t * ui_Image5;
+extern lv_obj_t * ui_Container7;
+extern lv_obj_t * ui_Container5;
+extern lv_obj_t * ui_uiLabelWifi;
+extern lv_obj_t * ui_Container6;
+extern lv_obj_t * ui_uiLabelIp;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus

@@ -4,17 +4,46 @@
 #include "SystemController.h"
 #include "ApiServer.h"
 #include "DisplayManager.h"
-#include "DisplayDriver.h"   // 🔥 IMPORTANTE
+#include "DisplayDriver.h"
 
-const char* ssid = "DANIEL G";
-const char* password = "zxc17030";
+// ----------------------
+// WIFI CONFIG
+// ----------------------
+const char* ssid = "X6 DANIEL";
+const char* password = "xdxdxdxd";
 
+// ----------------------
+// OBJETOS
+// ----------------------
 GasManager gas;
 SystemController controller(5, 4, 2, 13);
 ApiServer api;
-DisplayDriver driver;   // 🔥 NUEVO
+DisplayDriver driver;
 DisplayManager display;
 
+// ----------------------
+// ESTADOS
+// ----------------------
+enum SystemState {
+  WIFI_CONNECTING,
+  WIFI_CONNECTED_HOLD,
+  RUNNING
+};
+
+SystemState state = WIFI_CONNECTING;
+
+// ----------------------
+// TIMERS
+// ----------------------
+unsigned long wifiTimer = 0;
+unsigned long wifiConnectedTime = 0;
+
+const unsigned long wifiRetryTime = 5000;
+const unsigned long loadingHoldTime = 4000;
+
+// ----------------------
+// SETUP
+// ----------------------
 void setup() {
   Serial.begin(115200);
   delay(1000);
@@ -22,32 +51,26 @@ void setup() {
   Serial.println("\n\n=== SISTEMA INICIANDO ===");
 
   // ----------------------
-  // WIFI (SIN BLOQUEO)
+  // DISPLAY
   // ----------------------
-  Serial.print("[WiFi] Conectando");
+  driver.begin();
+  display.begin();
 
+  display.setScreen(1); // 🔥 SCREEN2 (LOADING)
+
+  // ----------------------
+  // WIFI INIT
+  // ----------------------
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
 
-  unsigned long startAttempt = millis();
+  wifiTimer = millis();
 
-  while (WiFi.status() != WL_CONNECTED && millis() - startAttempt < 10000) {
-    Serial.print(".");
-    delay(500);
-  }
-
-  if (WiFi.status() == WL_CONNECTED) {
-    Serial.println("\n[WiFi] OK");
-    Serial.print("IP: ");
-    Serial.println(WiFi.localIP());
-  } else {
-    Serial.println("\n[WiFi] ERROR - continuando sin WiFi");
-  }
+  Serial.println("[WiFi] Iniciando conexión...");
 
   // ----------------------
-  // SISTEMA
+  // SISTEMA BASE
   // ----------------------
-  Serial.println("[Sistema] Inicializando controlador...");
   controller.begin();
 
   Serial.println("[ESP-NOW] Inicializando receptor...");
@@ -56,32 +79,77 @@ void setup() {
   Serial.println("[API] Iniciando servidor...");
   api.begin(&gas, &controller, 600);
 
-  // ----------------------
-  // DISPLAY (🔥 SIEMPRE SE EJECUTA)
-  // ----------------------
-  Serial.println("[Display] Inicializando...");
-
-  driver.begin();    // LVGL + TFT
-  display.begin();   // UI
-
   Serial.println("=== SISTEMA LISTO ===\n");
 }
 
+// ----------------------
+// LOOP (PSEUDO PARALELISMO)
+// ----------------------
 void loop() {
 
-  // 🔥 1. SIEMPRE primero LVGL
+  // 🔥 1. UI SIEMPRE ACTIVA
   driver.loop();
 
-  // 🔥 2. lógica sistema
-  controller.update(gas, 600);
+  // ----------------------
+  // WIFI CONNECTING
+  // ----------------------
+  if (state == WIFI_CONNECTING) {
 
-  // 🔥 3. datos desacoplados
-  int gasValue = gas.getValue();
-  bool valveClosed = controller.isValveClosed();
+    display.setScreen(1); // loading
 
-  // 🔥 4. UI
-  display.update(gasValue, valveClosed);
+    if (WiFi.status() == WL_CONNECTED) {
 
-  // 🔥 5. API
-  api.handle();
+      Serial.println("[WiFi] CONECTADO");
+      Serial.print("IP: ");
+      Serial.println(WiFi.localIP());
+
+      wifiConnectedTime = millis();
+      state = WIFI_CONNECTED_HOLD;
+    }
+
+    if (millis() - wifiTimer > wifiRetryTime) {
+
+      Serial.println("[WiFi] Reintentando...");
+
+      WiFi.disconnect();
+      WiFi.begin(ssid, password);
+
+      wifiTimer = millis();
+    }
+
+    return;
+  }
+
+  // ----------------------
+  // HOLD EN LOADING (SUAVIZADO)
+  // ----------------------
+  if (state == WIFI_CONNECTED_HOLD) {
+
+    display.setScreen(1); // seguir en loading
+
+    if (millis() - wifiConnectedTime >= loadingHoldTime) {
+
+      Serial.println("[Sistema] entrando a modo normal");
+
+      display.setScreen(0); // MAIN SCREEN
+      state = RUNNING;
+    }
+
+    return;
+  }
+
+  // ----------------------
+  // SISTEMA NORMAL
+  // ----------------------
+  if (state == RUNNING) {
+
+    controller.update(gas, 600);
+
+    int gasValue = gas.getValue();
+    bool valveClosed = controller.isValveClosed();
+
+    display.update(gasValue, valveClosed);
+
+    api.handle();
+  }
 }

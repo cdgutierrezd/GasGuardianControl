@@ -12,6 +12,16 @@ class DisplayManager {
   public:
     void begin();
     void update(int gasValue, bool valveClosed);
+
+    // ----------------------
+    // CONTROL DE PANTALLAS
+    // ----------------------
+    void showLoadingScreen();
+    void showMainScreen();
+    void setScreen(int screen);
+
+  private:
+    int screenState = 0;
 };
 
 #endif
