@@ -13,6 +13,12 @@ const char* ssid = "X6 DANIEL";
 const char* password = "xdxdxdxd";
 
 // ----------------------
+// TIEMPOS (SIN MAGIC NUMBERS)
+// ----------------------
+const unsigned long SCREEN_LOADING_TIME = 10000;
+const unsigned long WIFI_RETRY_TIME = 10000;
+
+// ----------------------
 // OBJETOS
 // ----------------------
 GasManager gas;
@@ -25,26 +31,23 @@ DisplayManager display;
 // ESTADOS
 // ----------------------
 enum SystemState {
-  WIFI_CONNECTING,
-  WIFI_CONNECTED_HOLD,
+  STARTING,
   RUNNING
 };
 
-SystemState state = WIFI_CONNECTING;
+SystemState state = STARTING;
 
 // ----------------------
 // TIMERS
 // ----------------------
 unsigned long wifiTimer = 0;
-unsigned long wifiConnectedTime = 0;
-
-const unsigned long wifiRetryTime = 5000;
-const unsigned long loadingHoldTime = 4000;
+unsigned long screenStartTime = 0;
 
 // ----------------------
 // SETUP
 // ----------------------
 void setup() {
+
   Serial.begin(115200);
   delay(1000);
 
@@ -59,14 +62,15 @@ void setup() {
   display.setScreen(1); // 🔥 SCREEN2 (LOADING)
 
   // ----------------------
-  // WIFI INIT
+  // WIFI (NO BLOQUEANTE)
   // ----------------------
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
 
   wifiTimer = millis();
+  screenStartTime = millis();
 
-  Serial.println("[WiFi] Iniciando conexión...");
+  Serial.println("[WiFi] Intentando conexión en background...");
 
   // ----------------------
   // SISTEMA BASE
@@ -91,23 +95,11 @@ void loop() {
   driver.loop();
 
   // ----------------------
-  // WIFI CONNECTING
+  // WIFI BACKGROUND TASK
   // ----------------------
-  if (state == WIFI_CONNECTING) {
+  if (WiFi.status() != WL_CONNECTED) {
 
-    display.setScreen(1); // loading
-
-    if (WiFi.status() == WL_CONNECTED) {
-
-      Serial.println("[WiFi] CONECTADO");
-      Serial.print("IP: ");
-      Serial.println(WiFi.localIP());
-
-      wifiConnectedTime = millis();
-      state = WIFI_CONNECTED_HOLD;
-    }
-
-    if (millis() - wifiTimer > wifiRetryTime) {
+    if (millis() - wifiTimer > WIFI_RETRY_TIME) {
 
       Serial.println("[WiFi] Reintentando...");
 
@@ -116,22 +108,20 @@ void loop() {
 
       wifiTimer = millis();
     }
-
-    return;
   }
 
   // ----------------------
-  // HOLD EN LOADING (SUAVIZADO)
+  // TRANSICIÓN UI (INDEPENDIENTE DEL WIFI)
   // ----------------------
-  if (state == WIFI_CONNECTED_HOLD) {
+  if (state == STARTING) {
 
-    display.setScreen(1); // seguir en loading
+    display.setScreen(1); // loading
 
-    if (millis() - wifiConnectedTime >= loadingHoldTime) {
+    if (millis() - screenStartTime > SCREEN_LOADING_TIME) {
 
-      Serial.println("[Sistema] entrando a modo normal");
+      Serial.println("[UI] pasando a pantalla principal");
 
-      display.setScreen(0); // MAIN SCREEN
+      display.setScreen(0); // main screen
       state = RUNNING;
     }
 
